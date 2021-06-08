@@ -1,4 +1,4 @@
-
+# function apps require a storage account
 resource "azurerm_storage_account" "sa" {
   name                     = "tfdemosa"
   resource_group_name      = azurerm_resource_group.rg.name
@@ -7,6 +7,7 @@ resource "azurerm_storage_account" "sa" {
   account_replication_type = "LRS"
 }
 
+# function apps run as part of a service plan
 resource "azurerm_app_service_plan" "asp" {
   name                = "${azurerm_resource_group.rg.name}-asp"
   location            = azurerm_resource_group.rg.location
@@ -20,6 +21,7 @@ resource "azurerm_app_service_plan" "asp" {
   }
 }
 
+# the app itself!
 resource "azurerm_function_app" "fa" {
   name                       = "${azurerm_resource_group.rg.name}-function-app"
   location                   = azurerm_resource_group.rg.location
@@ -29,4 +31,8 @@ resource "azurerm_function_app" "fa" {
   storage_account_access_key = azurerm_storage_account.sa.primary_access_key
   os_type                    = "linux"
   version                    = "~3"
+}
+
+output "app_name" {
+  value = azurerm_function_app.fa.name
 }
